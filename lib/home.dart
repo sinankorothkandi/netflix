@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:netfl/movies.dart';
 import 'package:tmdb_api/tmdb_api.dart';
 
@@ -28,7 +27,6 @@ class _HomeState extends State<Home> {
   }
 
   
-
   loadMovies() async {
     TMDB tmdbWithCustemLogs = TMDB(ApiKeys(apiKey, readaccesstoken),
         logConfig: ConfigLogger(showLogs: true, showErrorLogs: true));
