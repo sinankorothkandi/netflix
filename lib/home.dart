@@ -18,8 +18,7 @@ class _HomeState extends State<Home> {
   List topratedmovies = [];
   List popularmovies = [];
   final String apiKey = 'ece5b87eda737366de7f2c96ce1d6631';
-  final readaccesstoken =
-      'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlY2U1Yjg3ZWRhNzM3MzY2ZGU3ZjJjOTZjZTFkNjYzMSIsInN1YiI6IjY1YzRhOGU5MDIxY2VlMDE4M2MzMWY0MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wWtwACViSyREuf4ToWiDtPi_g6WTI76_eM6D0vi2sug';
+
 
   @override
   void initState() {
