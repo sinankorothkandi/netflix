@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:netfl/movies.dart';
-import 'package:tmdb_api/tmdb_api.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,7 +16,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   List trendngmovies = [];
   List topratedmovies = [];
-  List newreleasedmovies = [];
   List popularmovies = [];
   final String apiKey = 'ece5b87eda737366de7f2c96ce1d6631';
   final readaccesstoken =
@@ -26,21 +27,31 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
-  
-  loadMovies() async {
-    TMDB tmdbWithCustemLogs = TMDB(ApiKeys(apiKey, readaccesstoken),
-        logConfig: ConfigLogger(showLogs: true, showErrorLogs: true));
-    Map trendingresult = await tmdbWithCustemLogs.v3.trending.getTrending();
-    Map topratedresult = await tmdbWithCustemLogs.v3.movies.getTopRated();
-    Map popularresult = await tmdbWithCustemLogs.v3.movies.getPopular();
-    print(trendingresult);
+ loadMovies() async {
+  final String trendingUrl = 'https://api.themoviedb.org/3/trending/movie/day?api_key=$apiKey';
+  final String topRatedUrl = 'https://api.themoviedb.org/3/movie/top_rated?api_key=$apiKey';
+  final String popularUrl = 'https://api.themoviedb.org/3/movie/popular?api_key=$apiKey';
+
+  final trendingResponse = await http.get(Uri.parse(trendingUrl));
+  final topRatedResponse = await http.get(Uri.parse(topRatedUrl));
+  final popularResponse = await http.get(Uri.parse(popularUrl));
+
+  if (trendingResponse.statusCode == 200 &&
+      topRatedResponse.statusCode == 200 &&
+      popularResponse.statusCode == 200) {
+    final trendingData = jsonDecode(trendingResponse.body);
+    final topRatedData = jsonDecode(topRatedResponse.body);
+    final popularData = jsonDecode(popularResponse.body);
+
     setState(() {
-      trendngmovies = trendingresult['results'];
-      topratedmovies = topratedresult['results'];
-      popularmovies = popularresult['results'];
+      trendngmovies = trendingData['results'];
+      topratedmovies = topRatedData['results'];
+      popularmovies = popularData['results'];
     });
-      print(trendngmovies);
+  } else {
+      print('data not fetched');
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +59,7 @@ class _HomeState extends State<Home> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         toolbarHeight: 35,
-        
-        
-        backgroundColor: Colors.black.withOpacity(0.3),
+        backgroundColor: Colors.transparent,
         leading: Image(
           image: AssetImage("images/netfologo.png"),
           fit: BoxFit.contain,

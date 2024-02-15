@@ -1,5 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:tmdb_api/tmdb_api.dart'; 
+import 'package:http/http.dart' as http;
 
 class SearchPage extends StatefulWidget {
   @override
@@ -14,13 +16,20 @@ class _SearchPageState extends State<SearchPage> {
       'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlY2U1Yjg3ZWRhNzM3MzY2ZGU3ZjJjOTZjZTFkNjYzMSIsInN1YiI6IjY1YzRhOGU5MDIxY2VlMDE4M2MzMWY0MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wWtwACViSyREuf4ToWiDtPi_g6WTI76_eM6D0vi2sug'; // Replace with your actual access token
 
   void searchMovies(String query) async {
-    TMDB tmdb = TMDB(ApiKeys(apiKey, readaccesstoken),
-        logConfig: ConfigLogger(showLogs: true, showErrorLogs: true));
+    final String searchUrl =
+        'https://api.themoviedb.org/3/search/movie?api_key=$apiKey&query=$query';
 
-    Map searchResult = await tmdb.v3.search.queryMovies(query);
-    setState(() {
-      searchMoviesList = searchResult['results'];
-    });
+    final response = await http.get(Uri.parse(searchUrl));
+
+    if (response.statusCode == 200) {
+      final searchData = jsonDecode(response.body);
+
+      setState(() {
+        searchMoviesList = searchData['results'];
+      });
+    } else {
+      print('data not fetched');
+    }
   }
 
   @override
